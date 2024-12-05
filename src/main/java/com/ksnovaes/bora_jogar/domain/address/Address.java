@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.UUID;
 
-@Table(name = "endereco-partida")
 @Entity
+@Table(name = "endereco-partida")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
