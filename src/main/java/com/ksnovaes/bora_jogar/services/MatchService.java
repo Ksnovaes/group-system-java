@@ -31,25 +31,11 @@ public class MatchService {
         User criador = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
-        //Address endereco = addressRepository.findById(dto.enderecoId())
-          //      .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
+        Address endereco = addressRepository.findById(dto.enderecoId())
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
 
-        Address enderecoFic = new Address();
-        enderecoFic.setId(UUID.randomUUID());
-        enderecoFic.setCidade("Cidade fic");
-        enderecoFic.setCep("72161829");
-        enderecoFic.setEnderecoPartida("Fic");
-
-        Match partida = new Match();
-        partida.setTituloPartida(dto.tituloPartida());
-        partida.setDescricaoPartida(dto.descricaoPartida());
-        partida.setDataPartida(dto.dataPartida());
-        partida.setEndereco(enderecoFic);
-        partida.setCriador(criador);
-
+        Match partida = Match.fromCreationDTO(dto, criador, endereco);
         return matchRepository.save(partida);
-
-
     }
 
     public List<MatchResponseDTO> getAllMatches(UUID userId) {

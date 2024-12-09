@@ -1,14 +1,17 @@
 package com.ksnovaes.bora_jogar.domain.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ksnovaes.bora_jogar.domain.match.Match;
 import com.ksnovaes.bora_jogar.domain.participant.Participant;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "usuario")
@@ -45,11 +48,12 @@ public class User {
 
     private String telefone;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Participant> participacoes;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Participant> participacoes = new ArrayList<>();
 
-    @OneToMany(mappedBy = "criador", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Match> partidasCriadas;
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
+    private List<Match> partidasCriadas = new ArrayList<>();
 
     public static User fromDTO(UserDTO dto) {
         return User.builder()

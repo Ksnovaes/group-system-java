@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -19,9 +20,9 @@ public class Participant {
     @GeneratedValue
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User usuario;
+    @ManyToMany
+    @JoinColumn(name = "apelido_usuario", nullable = false)
+    private List<User> usuario;
 
     @ManyToOne
     @JoinColumn(name = "match_id", nullable = false)
@@ -30,3 +31,4 @@ public class Participant {
     @Enumerated(EnumType.STRING)
     private StatusParticipacao status;
 }
+

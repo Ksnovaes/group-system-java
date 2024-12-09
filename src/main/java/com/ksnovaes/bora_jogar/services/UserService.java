@@ -5,6 +5,7 @@ import com.ksnovaes.bora_jogar.domain.user.User;
 import com.ksnovaes.bora_jogar.domain.user.UserDTO;
 import com.ksnovaes.bora_jogar.exceptions.ResourceNotFoundException;
 import com.ksnovaes.bora_jogar.repositories.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,14 +14,19 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional
 public class UserService {
     @Autowired
     UserRepository userRepository;
 
     public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().
-                stream().
-                map(User::toDTO)
+        return userRepository.findAll()
+                .stream()
+                .map(user -> {
+                    user.getParticipacoes().size();
+                    user.getPartidasCriadas().size();
+                    return user.toDTO();
+                })
                 .collect(Collectors.toList());
     }
 
@@ -31,7 +37,7 @@ public class UserService {
     }
 
     public User createUser(UserDTO dto) {
-        return userRepository.save(dto.toEntity());
+        return userRepository.save(User.fromDTO(dto));
     }
 
     public User updateUser(UUID id, UserDTO dto) {
@@ -61,4 +67,6 @@ public class UserService {
 
         return "Logged in successfully!";
     }
+
+
 }
