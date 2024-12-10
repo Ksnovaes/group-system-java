@@ -4,6 +4,7 @@ import com.ksnovaes.bora_jogar.domain.match.Match;
 import com.ksnovaes.bora_jogar.domain.match.MatchCreationDTO;
 import com.ksnovaes.bora_jogar.domain.match.MatchResponseDTO;
 import com.ksnovaes.bora_jogar.services.MatchService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,21 +14,25 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/match")
+@RequestMapping("/api/match")
 public class MatchController {
     @Autowired
     MatchService matchService;
 
-    @PostMapping("/create")
-    public ResponseEntity<Match> createMatch(@RequestBody MatchCreationDTO dto,
-                                             @RequestHeader("user-id") UUID userId) {
-        var created = matchService.createMatch(dto, userId);
-        return new ResponseEntity<>(created, HttpStatus.CREATED);
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public MatchResponseDTO createMatch(@Valid @RequestBody MatchCreationDTO dto,
+                                        @RequestHeader("user-id") String userId) {
+        return matchService.createMatch(dto, userId);
     }
 
-    @GetMapping("/matches")
-    public ResponseEntity<List<MatchResponseDTO>> getMatches(@RequestHeader("user-id") UUID userId) {
-        List<MatchResponseDTO> matches = matchService.getAllMatches(userId);
-        return new ResponseEntity<>(matches, HttpStatus.OK);
+    @GetMapping("/{matchId}")
+    public MatchResponseDTO getMatch(@PathVariable UUID matchId) {
+        return matchService.getMatchById(matchId);
+    }
+
+    @GetMapping
+    public List<MatchResponseDTO> getAllMatches() {
+        return matchService.getAllMatches();
     }
 }

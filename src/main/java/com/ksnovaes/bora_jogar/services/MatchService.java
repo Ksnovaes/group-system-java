@@ -3,6 +3,7 @@ package com.ksnovaes.bora_jogar.services;
 import com.ksnovaes.bora_jogar.domain.address.Address;
 import com.ksnovaes.bora_jogar.domain.match.Match;
 import com.ksnovaes.bora_jogar.domain.match.MatchCreationDTO;
+import com.ksnovaes.bora_jogar.domain.match.MatchDTOMapper;
 import com.ksnovaes.bora_jogar.domain.match.MatchResponseDTO;
 import com.ksnovaes.bora_jogar.domain.user.User;
 import com.ksnovaes.bora_jogar.exceptions.ResourceNotFoundException;
@@ -27,26 +28,64 @@ public class MatchService {
     @Autowired
     UserRepository userRepository;
 
-    public Match createMatch(MatchCreationDTO dto, UUID userId) {
-        User criador = userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    @Autowired
+    MatchDTOMapper matchDTOMapper;
 
-        Address endereco = addressRepository.findById(dto.enderecoId())
-                .orElseThrow(() -> new ResourceNotFoundException("Address not found"));
+    public MatchResponseDTO createMatch(MatchCreationDTO dto, String userIdHeader) {
+        if (userIdHeader == null | userIdHeader.isBlank()) {
+            throw new IllegalArgumentException("Header 'user-id' is required");
+        }
 
-        Match partida = Match.fromCreationDTO(dto, criador, endereco);
-        return matchRepository.save(partida);
+        UUID userId = UUID.fromString(userIdHeader);
+        User creator = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found."));
+        Address address = addressRepository.findById(dto.endereco_id())
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found."));
+
+        Match match = Match.builder()
+                .tituloPartida(dto.tituloPartida())
+                .descricaoPartida(dto.descricaoPartida())
+                .intensidadePartida(dto.intensidade())
+                .dataPartida(dto.dataPartida())
+                .endereco(address)
+                .criador(creator)
+                .build();
+
+        matchRepository.save(match);
+        return new MatchResponseDTO(
+                match.getId(),
+                match.getTituloPartida(),
+                match.getDescricaoPartida(),
+                match.getIntensidadePartida(),
+                match.getDataPartida(),
+                match.getEndereco().getId(),
+                creator.getId(),
+                null
+        );
     }
 
-    public List<MatchResponseDTO> getAllMatches(UUID userId) {
-        userRepository.findById(userId)
-                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+    public MatchResponseDTO getMatchById(UUID id) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Match not found."));
+        return matchDTOMapper.apply(match);
+    }
 
-        return matchRepository.findAll()
-                .stream()
-                .map(Match::toDTO)
+    public List<MatchResponseDTO> getAllMatches() {
+        return matchRepository.findAll().stream()
+                .map(matchDTOMapper)
                 .collect(Collectors.toList());
     }
 
+    public MatchResponseDTO updateMatch(UUID id, MatchCreationDTO dto) {
+        Match match = matchRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Match not found."));
 
+        match.setTituloPartida(dto.tituloPartida());
+        match.setDescricaoPartida(dto.descricaoPartida());
+        match.setIntensidadePartida(dto.intensidade());
+        match.setDataPartida(dto.dataPartida());
+
+        matchRepository.save(match);
+        return matchDTOMapper.apply(match);
+    }
 }

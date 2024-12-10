@@ -2,6 +2,7 @@ package com.ksnovaes.bora_jogar.services;
 
 import com.ksnovaes.bora_jogar.domain.address.Address;
 import com.ksnovaes.bora_jogar.domain.address.AddressDTO;
+import com.ksnovaes.bora_jogar.domain.address.AddressResponseDTO;
 import com.ksnovaes.bora_jogar.exceptions.ResourceNotFoundException;
 import com.ksnovaes.bora_jogar.repositories.AddressRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,24 +17,58 @@ public class AddressService {
     @Autowired
     AddressRepository addressRepository;
 
-    public Address createAddress(AddressDTO dto) {
-        Address newAddress = new Address();
-        newAddress.setCep(dto.cep());
-        newAddress.setEnderecoPartida(dto.enderecoPartida());
-
-        return addressRepository.save(newAddress);
+    public AddressResponseDTO createAddress(AddressDTO dto) {
+        Address address = Address.builder()
+                .cep(dto.cep())
+                .enderecoPartida(dto.enderecoPartida())
+                .build();
+        addressRepository.save(address);
+        return new AddressResponseDTO(
+                address.getId(),
+                address.getCep(),
+                address.getEnderecoPartida()
+        );
     }
 
-    public Address getAddressById(UUID id) {
-        var entity = addressRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No addresses found."));
-        return entity;
+    public AddressResponseDTO getAddressById(UUID id) {
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Address not found."));
+        return new AddressResponseDTO(
+                address.getId(),
+                address.getCep(),
+                address.getEnderecoPartida()
+        );
     }
 
-    public List<AddressDTO> getAllAddresses() {
-        return addressRepository.findAll()
-                .stream()
-                .map(Address::toDTO)
+    public List<AddressResponseDTO> getAllAdresses() {
+        return addressRepository.findAll().stream()
+                .map(address -> new AddressResponseDTO(
+                        address.getId(),
+                        address.getCep(),
+                        address.getEnderecoPartida()
+                ))
                 .collect(Collectors.toList());
+    }
+
+    public AddressResponseDTO updateAddress(UUID id, AddressDTO dto) {
+        Address address = addressRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
+
+        address.setCep(dto.cep());
+        address.setEnderecoPartida(dto.enderecoPartida());
+
+        addressRepository.save(address);
+        return new AddressResponseDTO(
+                address.getId(),
+                address.getCep(),
+                address.getEnderecoPartida()
+        );
+    }
+
+    public void deleteAddress(UUID id) {
+        if (!addressRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Endereço não encontrado");
+        }
+        addressRepository.deleteById(id);
     }
 }

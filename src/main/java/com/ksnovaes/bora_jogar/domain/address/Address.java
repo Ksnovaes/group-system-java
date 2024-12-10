@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 import java.util.UUID;
 
 @Entity
-@Table(name = "endereco-partida")
+@Table(name = "endereco_partida")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,22 +25,4 @@ public class Address {
     private String cep;
 
     private String enderecoPartida;
-
-    public AddressDTO toDTO() {
-        return new AddressDTO(
-                this.id,
-                this.cep,
-                this.enderecoPartida
-        );
-    }
-
-    public static AddressDTO fromEntity(Address entity) {
-        if (entity == null) return new AddressDTO(null, null, null);
-
-        return new AddressDTO(
-                entity.getId(),
-                entity.getCep(),
-                entity.getEnderecoPartida()
-        );
-    }
 }

@@ -13,16 +13,16 @@ import java.util.UUID;
 @Entity
 @Table(name = "participante")
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 public class Participant {
     @Id
     @GeneratedValue
     private UUID id;
 
-    @ManyToMany
-    @JoinColumn(name = "apelido_usuario", nullable = false)
-    private List<User> usuario;
+    @ManyToOne
+    @JoinColumn(name = "apelido_user", nullable = false)
+    private User usuario;
 
     @ManyToOne
     @JoinColumn(name = "match_id", nullable = false)

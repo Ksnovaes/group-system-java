@@ -1,8 +1,6 @@
 package com.ksnovaes.bora_jogar.services;
 
-import com.ksnovaes.bora_jogar.domain.user.LoginDTO;
-import com.ksnovaes.bora_jogar.domain.user.User;
-import com.ksnovaes.bora_jogar.domain.user.UserDTO;
+import com.ksnovaes.bora_jogar.domain.user.*;
 import com.ksnovaes.bora_jogar.exceptions.ResourceNotFoundException;
 import com.ksnovaes.bora_jogar.repositories.UserRepository;
 import jakarta.transaction.Transactional;
@@ -18,48 +16,42 @@ import java.util.stream.Collectors;
 public class UserService {
     @Autowired
     UserRepository userRepository;
+    @Autowired
+    UserDTOMapper userDTOMapper;
 
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll()
-                .stream()
-                .map(user -> {
-                    user.getParticipacoes().size();
-                    user.getPartidasCriadas().size();
-                    return user.toDTO();
-                })
+    public UserResponseDTO createUser(UserSignUpDTO dto) {
+        User user = new User();
+        user.setNome(dto.nome());
+        user.setSobrenome(dto.sobrenome());
+        user.setNickname(dto.nickname());
+        user.setApelido(dto.apelido());
+        user.setSexo(dto.sexo());
+        user.setIntensidade(dto.intensidade());
+        user.setBirthday(dto.dataNascimento());
+        user.setTelefone(dto.telefone());
+        user.setEmail(dto.email());
+        user.setPassword(dto.password());
+
+        userRepository.save(user);
+
+        return userDTOMapper.apply(user);
+    }
+
+    public UserResponseDTO getUserById(UUID id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        return userDTOMapper.apply(user);
+    }
+
+    public List<UserResponseDTO> getAllUsers() {
+        return userRepository.findAll().stream()
+                .map(userDTOMapper)
                 .collect(Collectors.toList());
     }
 
-    public UserDTO getUserById(UUID id) {
-        var entity = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found with id: " + id));
-        return entity.toDTO();
-    }
-
-    public User createUser(UserDTO dto) {
-        return userRepository.save(User.fromDTO(dto));
-    }
-
-    public User updateUser(UUID id, UserDTO dto) {
-        var entity = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found with id: " + id));
-        return userRepository.save(entity);
-    }
-
-    public void deleteUser(UUID id) {
-        var entity = userRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("No records found with id: " + id));
-        userRepository.delete(entity);
-    }
-
-    public String loginUser(LoginDTO dto) {
-        var optionalUser = userRepository.findByEmailOrNickname(dto.email(), dto.nickname());
-
-        if (optionalUser.isEmpty()) {
-            throw new ResourceNotFoundException("No records found with this email or nickname.");
-        }
-
-        User user = optionalUser.get();
+    public String login(UserLoginDTO dto) {
+        User user = userRepository.findByEmailOrNickname(dto.nicknameOrEmail(), dto.nicknameOrEmail())
+                .orElseThrow(() -> new ResourceNotFoundException("No records found with this email or nickname."));
 
         if (!user.getPassword().equals(dto.password())) {
             throw new ResourceNotFoundException("Wrong password.");
