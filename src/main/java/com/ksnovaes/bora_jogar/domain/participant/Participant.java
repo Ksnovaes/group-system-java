@@ -21,7 +21,7 @@ public class Participant {
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "apelido_user", nullable = false)
+    @JoinColumn(name = "user_id", nullable = false)
     private User usuario;
 
     @ManyToOne

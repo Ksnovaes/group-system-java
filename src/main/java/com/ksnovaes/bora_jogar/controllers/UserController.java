@@ -1,9 +1,6 @@
 package com.ksnovaes.bora_jogar.controllers;
 
-import com.ksnovaes.bora_jogar.domain.user.User;
-import com.ksnovaes.bora_jogar.domain.user.UserLoginDTO;
-import com.ksnovaes.bora_jogar.domain.user.UserResponseDTO;
-import com.ksnovaes.bora_jogar.domain.user.UserSignUpDTO;
+import com.ksnovaes.bora_jogar.domain.user.*;
 import com.ksnovaes.bora_jogar.services.UserService;
 import com.ksnovaes.bora_jogar.util.ApiResponse;
 import jakarta.validation.Valid;

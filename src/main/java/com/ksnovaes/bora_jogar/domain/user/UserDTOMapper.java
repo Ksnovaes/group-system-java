@@ -1,6 +1,5 @@
 package com.ksnovaes.bora_jogar.domain.user;
 
-import com.ksnovaes.bora_jogar.domain.match.Match;
 import com.ksnovaes.bora_jogar.domain.match.MatchResponseDTO;
 import org.springframework.stereotype.Service;
 
@@ -32,7 +31,9 @@ public class UserDTOMapper implements Function<User, UserResponseDTO> {
                                 match.getDataPartida(),
                                 match.getEndereco().getId(),
                                 match.getCriador().getId(),
-                                null
+                                match.getParticipantes().stream()
+                                        .map(participant -> participant.getUsuario().getApelido())
+                                        .collect(Collectors.toList())
                         ))
                         .collect(Collectors.toList())
         );

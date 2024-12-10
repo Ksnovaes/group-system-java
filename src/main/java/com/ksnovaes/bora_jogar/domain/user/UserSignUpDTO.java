@@ -11,8 +11,8 @@ public record UserSignUpDTO(
         @NotNull String apelido,
         @NotNull Genero sexo,
         @NotNull GameIntensity intensidade,
-        @NotNull Date dataNascimento,
         @NotNull String telefone,
+        @NotNull Date dataNascimento,
         @NotNull @Email String email,
         @NotNull String password
         ) {

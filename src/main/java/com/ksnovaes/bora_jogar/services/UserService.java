@@ -23,11 +23,10 @@ public class UserService {
         User user = new User();
         user.setNome(dto.nome());
         user.setSobrenome(dto.sobrenome());
-        user.setNickname(dto.nickname());
         user.setApelido(dto.apelido());
+        user.setNickname(dto.nickname());
         user.setSexo(dto.sexo());
         user.setIntensidade(dto.intensidade());
-        user.setBirthday(dto.dataNascimento());
         user.setTelefone(dto.telefone());
         user.setEmail(dto.email());
         user.setPassword(dto.password());
@@ -36,6 +35,7 @@ public class UserService {
 
         return userDTOMapper.apply(user);
     }
+
 
     public UserResponseDTO getUserById(UUID id) {
         User user = userRepository.findById(id)

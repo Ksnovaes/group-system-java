@@ -51,7 +51,11 @@ public class MatchService {
                 .criador(creator)
                 .build();
 
-        matchRepository.save(match);
+        match = matchRepository.save(match);
+
+        creator.getPartidasCriadas().add(match);
+        userRepository.save(creator);
+
         return new MatchResponseDTO(
                 match.getId(),
                 match.getTituloPartida(),

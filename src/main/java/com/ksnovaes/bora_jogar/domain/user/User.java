@@ -52,6 +52,5 @@ public class User {
     private List<Participant> participacoes;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private List<Match> partidasCriadas = new ArrayList<>();
 }

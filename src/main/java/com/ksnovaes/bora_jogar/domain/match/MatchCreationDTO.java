@@ -10,7 +10,6 @@ public record MatchCreationDTO(
         @NotNull String descricaoPartida,
         @NotNull MatchIntensity intensidade,
         @NotNull Date dataPartida,
-        @NotNull UUID endereco_id,
-        @NotNull UUID criador_id
+        @NotNull UUID endereco_id
         ) {
 }
