@@ -31,7 +31,7 @@ public class MatchController {
         return matchService.getMatchById(matchId);
     }
 
-    @GetMapping
+    @GetMapping("/matches")
     public List<MatchResponseDTO> getAllMatches() {
         return matchService.getAllMatches();
     }

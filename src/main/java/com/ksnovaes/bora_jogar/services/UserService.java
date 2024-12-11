@@ -23,7 +23,6 @@ public class UserService {
         User user = new User();
         user.setNome(dto.nome());
         user.setSobrenome(dto.sobrenome());
-        user.setApelido(dto.apelido());
         user.setNickname(dto.nickname());
         user.setSexo(dto.sexo());
         user.setIntensidade(dto.intensidade());
@@ -49,16 +48,21 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    public String login(UserLoginDTO dto) {
-        User user = userRepository.findByEmailOrNickname(dto.nicknameOrEmail(), dto.nicknameOrEmail())
-                .orElseThrow(() -> new ResourceNotFoundException("No records found with this email or nickname."));
+    public UserLoginResponseDTO login(UserLoginDTO dto) {
+        User user = userRepository.findByEmail(dto.email())
+                .orElseThrow(() -> new ResourceNotFoundException("Email ou apelido não encontrado."));
 
         if (!user.getPassword().equals(dto.password())) {
-            throw new ResourceNotFoundException("Wrong password.");
+            throw new ResourceNotFoundException("Senha incorreta.");
         }
 
-        return "Logged in successfully!";
+        return new UserLoginResponseDTO(
+                user.getId(),
+                user.getEmail(),
+                user.getPassword()
+        );
     }
+
 
 
 }

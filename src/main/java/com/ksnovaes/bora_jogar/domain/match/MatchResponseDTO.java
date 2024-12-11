@@ -12,6 +12,6 @@ public record MatchResponseDTO(
         Date dataPartida,
         UUID enderecoId,
         UUID criadorId,
-        List<String> apelidos
+        List<String> nicknames
 ) {
 }

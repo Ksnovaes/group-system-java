@@ -12,7 +12,6 @@ public record UserResponseDTO(
         String nome,
         String sobrenome,
         String nickname,
-        String apelido,
         Genero sexo,
         GameIntensity intensidade,
         Date dataNascimento,

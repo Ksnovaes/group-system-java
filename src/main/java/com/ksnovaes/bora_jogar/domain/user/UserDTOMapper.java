@@ -15,7 +15,6 @@ public class UserDTOMapper implements Function<User, UserResponseDTO> {
                 user.getNome(),
                 user.getSobrenome(),
                 user.getNickname(),
-                user.getApelido(),
                 user.getSexo(),
                 user.getIntensidade(),
                 user.getBirthday(),
@@ -32,7 +31,7 @@ public class UserDTOMapper implements Function<User, UserResponseDTO> {
                                 match.getEndereco().getId(),
                                 match.getCriador().getId(),
                                 match.getParticipantes().stream()
-                                        .map(participant -> participant.getUsuario().getApelido())
+                                        .map(participant -> participant.getUsuario().getNickname())
                                         .collect(Collectors.toList())
                         ))
                         .collect(Collectors.toList())

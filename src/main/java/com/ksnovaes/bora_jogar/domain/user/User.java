@@ -31,8 +31,6 @@ public class User {
 
     private String nickname;
 
-    private String apelido;
-
     @Enumerated(EnumType.STRING)
     private Genero sexo;
 

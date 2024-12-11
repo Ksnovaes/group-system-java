@@ -20,7 +20,7 @@ public class MatchDTOMapper implements Function<Match, MatchResponseDTO> {
                 match.getCriador().getId(),
                 match.getParticipantes()
                         .stream()
-                        .map(participant -> participant.getUsuario().getApelido())
+                        .map(participant -> participant.getUsuario().getNickname())
                         .collect(Collectors.toList())
         );
     }

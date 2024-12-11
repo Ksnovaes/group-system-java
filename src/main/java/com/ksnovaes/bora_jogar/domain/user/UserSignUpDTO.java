@@ -8,7 +8,6 @@ public record UserSignUpDTO(
         @NotNull String nome,
         @NotNull String sobrenome,
         @NotNull String nickname,
-        @NotNull String apelido,
         @NotNull Genero sexo,
         @NotNull GameIntensity intensidade,
         @NotNull String telefone,
